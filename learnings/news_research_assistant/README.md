@@ -163,7 +163,7 @@ from tools import enhanced_web_scraping_tool
 
 agent = LlmAgent(
     name="NewsSearchAgent",
-    model="gemini-2.0-flash",  # Required for google_search
+    model="gemini-2.5-flash-preview-05-20",  # Required for google_search
     instruction="Your instructions here...",
     tools=[google_search, enhanced_web_scraping_tool]
 )
@@ -196,7 +196,7 @@ agent = LlmAgent(
     "metadata": {
         "total_agents_used": 3,
         "primary_tools": ["google_search", "enhanced_web_scraping", "advanced_content_analysis"],
-        "model_used": "gemini-2.0-flash"
+        "model_used": "gemini-2.5-flash-preview-05-20"
     }
 }
 ```

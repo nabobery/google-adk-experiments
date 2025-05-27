@@ -1,8 +1,7 @@
 import logging
 from typing import Dict, Any, List
 from google.adk.agents import Agent
-from google.adk.tools import google_search
-from ...tools import enhanced_web_scraping_tool, advanced_content_analysis_tool
+from ...tools import enhanced_web_scraping_tool, advanced_content_analysis_tool, google_search_tool
 from .prompt import FACT_CHECKER_INSTRUCTION, FACT_CHECKER_DESCRIPTION
 
 logger = logging.getLogger(__name__)
@@ -10,10 +9,10 @@ logger = logging.getLogger(__name__)
 # Main FactCheckerAgent following ADK patterns
 root_agent = Agent(
     name="FactCheckerAgent",
-    model="gemini-2.0-flash",  # Use Gemini 2.0 for consistency
+    model="gemini-2.5-flash-preview-05-20",  # Use Gemini 2.0 for consistency
     instruction=FACT_CHECKER_INSTRUCTION,
     description=FACT_CHECKER_DESCRIPTION,
-    tools=[google_search, enhanced_web_scraping_tool, advanced_content_analysis_tool]
+    tools=[google_search_tool, enhanced_web_scraping_tool, advanced_content_analysis_tool]
 )
 
 # Legacy wrapper class for backward compatibility

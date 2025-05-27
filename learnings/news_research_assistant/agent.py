@@ -9,16 +9,21 @@ from .prompt import MAIN_COORDINATOR_INSTRUCTION, MAIN_COORDINATOR_DESCRIPTION
 from .sub_agents.news_search_agent.agent import NewsSearchAgent
 from .sub_agents.content_summarizer_agent.agent import ContentSummarizerAgent
 from .sub_agents.fact_checker_agent.agent import FactCheckerAgent
+from .sub_agents.news_search_agent.agent import root_agent as news_search_agent
+from .sub_agents.content_summarizer_agent.agent import root_agent as content_summarizer_agent
+from .sub_agents.fact_checker_agent.agent import root_agent as fact_checker_agent
 
 logger = logging.getLogger(__name__)
 
 # Main News Research Assistant Agent following ADK patterns
 root_agent = Agent(
     name="NewsResearchCoordinator",
-    model="gemini-2.0-flash",
+    model="gemini-2.5-flash-preview-05-20",
     instruction=MAIN_COORDINATOR_INSTRUCTION,
     description=MAIN_COORDINATOR_DESCRIPTION,
-    tools=[]  # No direct tools - coordinates through sub-agents
+    # global_instruction=MAIN_COORDINATOR_INSTRUCTION,
+    tools=[],  # No direct tools - coordinates through sub-agents
+    sub_agents=[news_search_agent, content_summarizer_agent, fact_checker_agent]
 )
 
 # Legacy wrapper class for complex operations and backward compatibility
@@ -138,7 +143,7 @@ class NewsResearchAssistant:
                 "metadata": {
                     "total_agents_used": 3,
                     "primary_tools": ["google_search", "enhanced_web_scraping", "advanced_content_analysis"],
-                    "model_used": "gemini-2.0-flash"
+                    "model_used": "gemini-2.5-flash-preview-05-20"
                 }
             }
             

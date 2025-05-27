@@ -1,7 +1,6 @@
 import logging
 from google.adk.agents import Agent
-from google.adk.tools import google_search
-from ...tools import enhanced_web_scraping_tool
+from ...tools import enhanced_web_scraping_tool, google_search_tool
 from .prompt import NEWS_SEARCH_INSTRUCTION, NEWS_SEARCH_DESCRIPTION
 
 logger = logging.getLogger(__name__)
@@ -9,10 +8,10 @@ logger = logging.getLogger(__name__)
 # Main NewsSearchAgent following ADK patterns
 root_agent = Agent(
     name="NewsSearchAgent",
-    model="gemini-2.0-flash",  # Required for google_search tool
+    model="gemini-2.5-flash-preview-05-20",  # Required for google_search tool
     instruction=NEWS_SEARCH_INSTRUCTION,
     description=NEWS_SEARCH_DESCRIPTION,
-    tools=[google_search, enhanced_web_scraping_tool]
+    tools=[google_search_tool, enhanced_web_scraping_tool]
 )
 
 # Legacy wrapper class for backward compatibility

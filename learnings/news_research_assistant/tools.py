@@ -11,6 +11,8 @@ import re
 # Import Google ADK tools properly
 from google.adk.tools import google_search
 from google.adk.tools import FunctionTool, ToolContext
+from google.adk.agents import Agent
+from google.adk.tools.agent_tool import AgentTool
 
 # Import LangChain Google tools for enhanced functionality
 try:
@@ -323,7 +325,7 @@ async def advanced_analyze_content(content: str, title: str = "", analysis_type:
         if LANGCHAIN_AVAILABLE and os.getenv("GOOGLE_API_KEY"):
             try:
                 llm = ChatGoogleGenerativeAI(
-                    model="gemini-pro",
+                    model="gemini-2.5-flash-preview-05-20",
                     temperature=0.1
                 )
                 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
@@ -638,7 +640,7 @@ async def _get_ai_insights(content: str, title: str = "", llm = None) -> Dict[st
         return {
             "available": True,
             "analysis": ai_analysis,
-            "model_used": "gemini-pro"
+            "model_used": "gemini-2.5-flash-preview-05-20"
         }
     
     except Exception as e:
@@ -689,11 +691,23 @@ def _get_bias_assessment(score: float) -> str:
 enhanced_web_scraping_tool = FunctionTool(func=enhanced_scrape_article)
 advanced_content_analysis_tool = FunctionTool(func=advanced_analyze_content)
 
+google_search_agent = Agent(
+    model="gemini-2.0-flash",
+    name="google_search_agent",
+    tools=[google_search],
+    instruction="You are a helpful assistant that can search the web for information.",
+    description="You are a helpful assistant that can search the web for information."
+)
+
+google_search_tool = AgentTool(
+    agent=google_search_agent,
+)
+
 # Export the tools and the built-in google_search
 __all__ = [
-    'google_search',  # Built-in ADK tool
     'enhanced_web_scraping_tool',
     'advanced_content_analysis_tool',
     'enhanced_scrape_article',  # Function for direct use
-    'advanced_analyze_content'  # Function for direct use
+    'advanced_analyze_content',  # Function for direct use
+    'google_search_tool'
 ] 

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 # Main ContentSummarizerAgent following ADK patterns
 root_agent = Agent(
     name="ContentSummarizerAgent", 
-    model="gemini-2.0-flash",  # Use Gemini 2.0 for consistency
+    model="gemini-2.5-flash-preview-05-20",  # Use Gemini 2.0 for consistency
     instruction=CONTENT_SUMMARIZER_INSTRUCTION,
     description=CONTENT_SUMMARIZER_DESCRIPTION,
     tools=[advanced_content_analysis_tool]
