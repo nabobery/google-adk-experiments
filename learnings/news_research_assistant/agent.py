@@ -1,6 +1,7 @@
 import logging
 from typing import Dict, Any, List
 import asyncio
+import html  # Import the html module
 
 from google.adk.agents import Agent
 from .prompt import MAIN_COORDINATOR_INSTRUCTION, MAIN_COORDINATOR_DESCRIPTION
@@ -289,7 +290,7 @@ class NewsResearchAssistant:
             Dictionary containing focused insights
         """
         try:
-            logger.info(f"Generating insights for: {topic} (focus: {focus_area})")
+            logger.info(f"Generating insights for: {html.escape(topic)} (focus: {html.escape(focus_area)})")
             
             # First, get recent content on the topic
             search_results = await self.news_search_agent.search_and_scrape_articles(topic, num_articles=3)

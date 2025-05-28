@@ -229,8 +229,16 @@ async def analyze_content_quality(content: str, title: str = "") -> Dict[str, An
     Backward compatibility function for content quality analysis
     """
     agent = ContentSummarizerAgent()
-    result = await agent.analyze_article(content, title, analysis_type="credibility")
-    
+    try:
+        result = await agent.analyze_article(content, title, analysis_type="credibility")
+    except Exception as e:
+        logger.error(f"Error in analyze_content_quality: {str(e)}")
+        return {
+            "quality_score": 0.0,
+            "analysis": f"Analysis failed: {str(e)}",
+            "method": "Error"
+        }
+
     if result.get("success"):
         return {
             "quality_score": 0.75,  # Default score for backward compatibility
