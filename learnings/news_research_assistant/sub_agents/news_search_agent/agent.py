@@ -1,4 +1,5 @@
 import logging
+import html
 from google.adk.agents import Agent
 from ...tools import enhanced_web_scraping_tool, google_search_tool
 from .prompt import NEWS_SEARCH_INSTRUCTION, NEWS_SEARCH_DESCRIPTION
@@ -163,7 +164,7 @@ async def scrape_article_content(url: str) -> dict:
         result = await enhanced_scrape_article(url)
         return result
     except Exception as e:
-        logger.error(f"Error scraping article {url}: {str(e)}")
+        logging.error("Error scraping article %s: %s", html.escape(url), html.escape(str(e)))
         return {
             "success": False,
             "error": str(e),
