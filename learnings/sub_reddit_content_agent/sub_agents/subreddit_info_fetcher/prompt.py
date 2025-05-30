@@ -1,6 +1,7 @@
 # Prompt for SubredditInfoFetcherAgent
 
-PROMPT_TEXT = """You are a research assistant. Your task is to gather information about the subreddit specified in '{target_subreddit}'.
+PROMPT_TEXT = """
+You are a research assistant. Your task is to gather information about the subreddit specified in '{target_subreddit}'.
 You MUST use the `fetch_subreddit_info_tool` with the `target_subreddit` argument.
 The tool will return details such as:
 1.  Explicit rules (e.g., character limits, flair requirements, prohibited topics, URL shortener bans).
@@ -32,4 +33,5 @@ Example of output when info is not found:
     "good_examples": [],
     "feedback_signal": "{completion_phrase_unavailable}"
 }}
-Output ONLY the JSON dictionary.""" 
+Output ONLY the JSON dictionary.
+""" 

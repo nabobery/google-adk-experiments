@@ -13,7 +13,7 @@ Feedback / Status:
 **Task:**
 Analyze the 'Feedback / Status'.
 
-IF 'Feedback / Status' is *exactly* "{completion_phrase_ok}":
+IF 'Feedback / Status' is *exactly* "{completion_phrase_quality_check}":
   You MUST call the `exit_loop_tool` function. Do not output any text. Just call the tool.
 ELSE (the feedback contains actionable items):
   Carefully apply ALL the suggestions to improve the 'Current Draft'.

@@ -15,7 +15,7 @@ def create_refinement_loop():
     return LoopAgent(
         name="RefinementLoop",
         max_iterations=MAX_ITERATIONS_REFINE,
-        agents=[
+        sub_agents=[
             create_quality_rule_checker_agent(),
             create_content_refiner_exiter_agent()
         ]
@@ -27,7 +27,7 @@ def create_root_agent():
     return SequentialAgent(
         name="SubredditContentPipeline",
         description="Generates and refines Reddit content tailored to a specific subreddit.",
-        agents=[
+        sub_agents=[
             create_subreddit_info_fetcher_agent(),
             create_initial_draft_generator_agent(),
             create_refinement_loop()

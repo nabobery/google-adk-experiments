@@ -11,7 +11,7 @@ Subreddit Guidelines (may be empty or indicate unavailability):
 ---
 Examples of Good Posts (may be empty):
 ---
-{good_post_examples}
+{good_post_examples_text}
 ---
 
 **Task:**
@@ -27,7 +27,7 @@ Evaluate the 'Current Draft'.
 
 **Output:**
 - IF the draft meets criteria (specific or general, as applicable) and is suitable:
-  Respond *exactly* with the phrase: "{completion_phrase_ok}"
+  Respond *exactly* with the phrase: "{completion_phrase_quality_check}"
 - ELSE (if issues exist):
   Provide concise, actionable feedback, one item per line. Prefix each with "Feedback: ".
   Examples:
@@ -37,4 +37,5 @@ Evaluate the 'Current Draft'.
   Feedback: Content seems off-topic for {target_subreddit}. (If guidelines known)
   Feedback: Consider breaking up long paragraphs.
 
-Output *only* the feedback OR the exact completion phrase. Do not add explanations.""" 
+Output *only* the feedback OR the exact completion phrase. Do not add explanations.
+""" 

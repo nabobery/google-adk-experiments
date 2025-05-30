@@ -4,8 +4,14 @@ import os
 import asyncio
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
+from google.genai import types # Added for types.Content
 from .agent import root_agent
-from .config import STATE_USER_TOPIC_OR_URL, STATE_TARGET_SUBREDDIT, STATE_CURRENT_DRAFT
+from .config import (
+    STATE_USER_TOPIC_OR_URL, 
+    STATE_TARGET_SUBREDDIT, 
+    STATE_CURRENT_DRAFT,
+    APP_NAME # Assuming APP_NAME is defined in your config.py
+)
 
 
 async def run_subreddit_content_agent(user_topic_or_url: str, target_subreddit: str):
@@ -19,50 +25,81 @@ async def run_subreddit_content_agent(user_topic_or_url: str, target_subreddit: 
     Returns:
         The final refined content draft
     """
-    # Initialize session service and runner
     session_service = InMemorySessionService()
-    runner = Runner(session_service=session_service)
+    # Initialize runner with the root_agent and app_name
+    runner = Runner(
+        agent=root_agent, 
+        app_name=APP_NAME, 
+        session_service=session_service
+    )
     
-    # Create a new session
-    session = await session_service.create_session()
+    session = await session_service.create_session(app_name=APP_NAME) # Pass app_name here too
     
-    # Set initial state
-    initial_state = {
+    initial_state_updates = {
         STATE_USER_TOPIC_OR_URL: user_topic_or_url,
         STATE_TARGET_SUBREDDIT: target_subreddit
     }
-    
+    # Update the session state directly before running if supported, or pass as initial_event
+    # For simplicity with run_async, we often construct an initial message/event if needed
+    # or assume the first turn will set up based on user input if the agent is designed that way.
+    # Here, we'll rely on the agent picking up from initial state passed via first message or inherent logic.
+
     print(f"🚀 Starting Subreddit Content Tailoring Agent")
     print(f"📝 Topic/URL: {user_topic_or_url}")
     print(f"🎯 Target Subreddit: {target_subreddit}")
     print("=" * 60)
-    
+
+    final_draft = None
+    final_session_state = session.state # Get initial state, will be updated by events
+    if final_session_state is None:
+        final_session_state = {}
+    final_session_state.update(initial_state_updates)
+
+    # Construct the initial message to trigger the agent with the provided topic and subreddit
+    # This is a common pattern if the agent expects user input to kick things off.
+    # Alternatively, if your agent is designed to pick up STATE_USER_TOPIC_OR_URL and STATE_TARGET_SUBREDDIT
+    # from the initial state without an explicit first message, this might not be strictly necessary
+    # but it makes the initiation clear.
+    initial_user_message = f"Create a Reddit post about '{user_topic_or_url}' for the subreddit '{target_subreddit}'."
+    initial_content = types.Content(parts=[types.Part(text=initial_user_message)])
+
     try:
-        # Run the agent
-        result = await runner.run(
-            agent=root_agent,
+        async for event in runner.run_async(
+            user_id=session.user_id, # Assuming default user_id or manage as needed
             session_id=session.id,
-            state=initial_state
-        )
-        
-        print("\n✅ Agent execution completed!")
+            new_message=initial_content,
+            initial_state=initial_state_updates # Pass initial state here
+        ):
+            # You can inspect all events if needed for debugging:
+            # print(f"  [Event] Author: {event.author}, Type: {type(event).__name__}, Final: {event.is_final_response()}, Content: {event.content}, Actions: {event.actions}")
+            if event.actions and event.actions.state_delta:
+                final_session_state.update(event.actions.state_delta)
+            
+            if event.is_final_response():
+                # The final draft should now be in the accumulated final_session_state
+                pass # We will get it from final_session_state after the loop
+
+        print("\n✅ Agent execution fully consumed!")
         print("=" * 60)
         
-        # Extract the final draft from the result
-        if STATE_CURRENT_DRAFT in result.state:
-            final_draft = result.state[STATE_CURRENT_DRAFT]
+        if STATE_CURRENT_DRAFT in final_session_state:
+            final_draft = final_session_state[STATE_CURRENT_DRAFT]
             print("📄 Final Reddit Post Draft:")
             print("-" * 40)
             print(final_draft)
             print("-" * 40)
-            return final_draft
         else:
-            print("❌ No final draft was generated.")
-            return None
+            print("❌ No final draft was found in session state.")
+            final_draft = None # Ensure it's None
             
     except Exception as e:
         print(f"❌ Error running agent: {str(e)}")
+        # It's good practice to log the full traceback for async errors
+        import traceback
+        traceback.print_exc()
         raise
+    
+    return final_draft
 
 
 def main():

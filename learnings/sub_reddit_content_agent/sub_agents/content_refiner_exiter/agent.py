@@ -10,21 +10,21 @@ from ...config import (
     COMPLETION_PHRASE_QUALITY_CHECK
 )
 from .prompt import PROMPT_TEXT
-
+from google.adk.agents.callback_context import CallbackContext
 
 def create_content_refiner_exiter_agent():
     """Creates the ContentRefinerOrExiterAgent"""
     
-    def format_instruction(session_state):
+    def format_instruction(context: CallbackContext):
         return PROMPT_TEXT.format(
-            current_draft=session_state.get(STATE_CURRENT_DRAFT, ""),
-            feedback_or_ok_signal=session_state.get(STATE_FEEDBACK_OR_OK_SIGNAL, ""),
-            completion_phrase_ok=COMPLETION_PHRASE_QUALITY_CHECK
+            current_draft=context.state.get(STATE_CURRENT_DRAFT, ""),
+            feedback_or_ok_signal=context.state.get(STATE_FEEDBACK_OR_OK_SIGNAL, ""),
+            completion_phrase_quality_check=COMPLETION_PHRASE_QUALITY_CHECK
         )
     
     return LlmAgent(
         name="ContentRefinerOrExiterAgent",
-        model=LiteLlm(model_name=GEMINI_MODEL),
+        model=GEMINI_MODEL,
         instruction=format_instruction,
         tools=[exit_loop_tool],
         output_key=STATE_CURRENT_DRAFT
